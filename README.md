@@ -18,7 +18,7 @@
 - 背景建立 Exercise Database：從既有訓練紀錄自動補動作資料
 - 保持 Firestore `users/{uid}` 架構
 
-## Firestore 主要結構
+## Firestore  主要結構
 
 ```text
 users/{uid}

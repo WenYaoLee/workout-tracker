@@ -1,5 +1,3 @@
-# workout-tracker
-
 # Workout Tracker
 
 目前版本：v1.5

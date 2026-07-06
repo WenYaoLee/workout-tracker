@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fire Training Tracker</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-icon">🔥</div>
+        <div>
+          <h1>Fire Training</h1>
+          <p>Workout Tracker</p>
+        </div>
+      </div>
+      <nav class="nav-menu">
+        <button class="nav-link active" data-view="dashboard-view">🏠 Dashboard</button>
+        <button class="nav-link" data-view="start-workout-view">🏋️ 開始訓練</button>
+        <button class="nav-link" data-view="today-workout-view">📋 今日訓練</button>
+        <button class="nav-link" data-view="history-view">🗓️ 歷史紀錄</button>
+        <button class="nav-link" data-view="exercise-view">🧰 器材資料庫</button>
+        <button class="nav-link" data-view="pr-view">🏆 PR 紀錄</button>
+        <button class="nav-link" data-view="body-view">⚖️ 身體紀錄</button>
+        <button class="nav-link" data-view="cardio-view">🚴 有氧紀錄</button>
+        <button class="nav-link" data-view="stats-view">📊 統計分析</button>
+        <button class="nav-link" data-view="analysis-view">📈 訓練分析</button>
+        <button class="nav-link" data-view="import-view">📥 資料匯入</button>
+      </nav>
+      <div class="sidebar-footer">
+        <button id="loginBtn" class="primary-btn full">Google 登入</button>
+        <button id="logoutBtn" class="ghost-btn full hidden">登出</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <button id="menuToggle" class="icon-btn">☰</button>
+        <div>
+          <h2 id="pageTitle">Dashboard</h2>
+          <p id="userStatus">尚未登入</p>
+        </div>
+      </header>
+
+      <section id="dashboard-view" class="page-view active">
+        <div class="hero-card">
+          <div>
+            <p class="eyebrow">今日訓練</p>
+            <h2 id="helloText">準備開始今天的訓練</h2>
+            <p id="todayDate" class="muted">-</p>
+          </div>
+          <button class="primary-btn hero-action" data-go-view="start-workout-view">開始今天訓練 →</button>
+        </div>
+        <div class="grid cards-4">
+          <article class="stat-card"><span>今日重訓</span><strong id="todaySetCount">0 組</strong></article>
+          <article class="stat-card"><span>今日有氧</span><strong id="todayCardioMinutes">0 分</strong></article>
+          <article class="stat-card"><span>本週運動</span><strong id="weekWorkoutCount">0 天</strong></article>
+          <article class="stat-card"><span>本週有氧</span><strong id="weekCardioMinutes">0 分</strong></article>
+          <article class="stat-card"><span>最新體重</span><strong id="latestBodyWeight">-</strong></article>
+          <article class="stat-card"><span>累積變化</span><strong id="bodyWeightChange">-</strong></article>
+        </div>
+        <div class="panel">
+          <div class="panel-title-row"><h3>今日摘要</h3><button class="ghost-light-btn" data-go-view="today-workout-view">查看今日訓練</button></div>
+          <div id="dashboardSummary" class="empty-state">登入後開始記錄你的訓練。</div>
+        </div>
+      </section>
+
+      <section id="start-workout-view" class="page-view">
+        <div class="panel workout-panel">
+          <div class="panel-title-row">
+            <div>
+              <p class="eyebrow">快速新增</p>
+              <h3>開始訓練</h3>
+            </div>
+            <button id="favoriteCurrentBtn" class="ghost-light-btn">☆ 收藏器材</button>
+          </div>
+
+          <div class="form-grid top-form">
+            <label>訓練部位
+              <select id="muscleGroup">
+                <option value="">全部</option>
+                <option value="胸">胸</option>
+                <option value="背">背</option>
+                <option value="肩">肩</option>
+                <option value="腿">腿</option>
+                <option value="手臂">手臂</option>
+                <option value="核心">核心</option>
+                <option value="有氧">有氧</option>
+                <option value="其他">其他</option>
+              </select>
+            </label>
+            <label class="wide-field">器材 / 動作
+              <input list="exerciseOptions" id="exerciseName" placeholder="選擇或輸入器材" autocomplete="off" />
+              <datalist id="exerciseOptions"></datalist>
+            </label>
+            <label>訓練型態
+              <select id="exerciseMode">
+                <option value="weight">Weight</option>
+                <option value="bodyweight">Bodyweight</option>
+                <option value="time">Time</option>
+              </select>
+            </label>
+            <label id="unitField">重量單位
+              <select id="unit"><option>kg</option><option>lbs</option></select>
+            </label>
+          </div>
+
+          <div id="exerciseInsight" class="insight-grid">
+            <div class="insight-box"><span>🏆 最大重量</span><strong>-</strong></div>
+            <div class="insight-box"><span>🔥 最多次數</span><strong>-</strong></div>
+            <div class="insight-box"><span>🕓 上次訓練</span><strong>-</strong></div>
+          </div>
+
+          <div class="quick-input-grid">
+            <div class="counter-card">
+              <span id="weightLabel">重量</span>
+              <div class="counter-row">
+                <button class="round-btn" data-step-target="weight" data-step="-1">−</button>
+                <input type="number" id="weight" placeholder="0" inputmode="decimal" />
+                <button class="round-btn" data-step-target="weight" data-step="1">＋</button>
+              </div>
+            </div>
+            <div class="counter-card">
+              <span id="valueLabel">次數 / 時間</span>
+              <div class="counter-row">
+                <button class="round-btn" data-step-target="reps" data-step="-1">−</button>
+                <input type="number" id="reps" placeholder="0" inputmode="numeric" />
+                <button class="round-btn" data-step-target="reps" data-step="1">＋</button>
+              </div>
+            </div>
+          </div>
+
+          <label id="valueUnitField">紀錄單位
+            <select id="valueUnit"><option value="reps">reps</option><option value="sec">sec</option><option value="min">min</option></select>
+          </label>
+
+          <div class="rpe-panel">
+            <span>RPE</span>
+            <div id="rpeButtons" class="rpe-buttons">
+              <button data-rpe="6">6</button><button data-rpe="7">7</button><button data-rpe="8">8</button><button data-rpe="9">9</button><button data-rpe="10">10</button>
+            </div>
+            <input type="hidden" id="rpe" />
+          </div>
+
+          <label>備註
+            <input id="note" placeholder="可留空，例如：最後一組很吃力" />
+          </label>
+
+          <div class="action-row">
+            <button id="addStrengthBtn" class="primary-btn big-btn">新增一組</button>
+            <button id="clearStrengthBtn" class="ghost-light-btn">清空</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title-row"><h3>今天已新增</h3><button class="ghost-light-btn" data-go-view="today-workout-view">查看全部</button></div>
+          <div id="quickTodayRecords" class="record-list empty-state">今天尚無紀錄。</div>
+        </div>
+      </section>
+
+      <section id="today-workout-view" class="page-view">
+        <div class="panel">
+          <h3>今日訓練</h3>
+          <div id="todayRecords" class="record-list empty-state">今天尚無紀錄。</div>
+          <button id="finishWorkoutBtn" class="primary-btn">完成今天訓練</button>
+        </div>
+      </section>
+
+      <section id="history-view" class="page-view">
+        <div class="panel"><h3>歷史紀錄</h3><div id="historyList" class="record-list empty-state">尚無歷史紀錄。</div></div>
+      </section>
+
+      <section id="exercise-view" class="page-view">
+        <div class="panel">
+          <div class="panel-title-row"><h3>器材資料庫</h3><p class="muted">收藏器材會排在最上面。</p></div>
+          <div id="exerciseList" class="record-list empty-state">尚無器材資料。</div>
+        </div>
+      </section>
+
+      <section id="pr-view" class="page-view">
+        <div class="panel"><h3>PR 紀錄</h3><div id="prList" class="record-list empty-state">尚無 PR 紀錄。</div></div>
+      </section>
+
+      <section id="body-view" class="page-view">
+        <div class="grid cards-4 body-summary-grid">
+          <article class="stat-card"><span>目前體重</span><strong id="bodyCurrentWeight">-</strong></article>
+          <article class="stat-card"><span>與上次</span><strong id="bodyLastChange">-</strong></article>
+          <article class="stat-card"><span>起始體重</span><strong id="bodyStartWeight">-</strong></article>
+          <article class="stat-card"><span>累積下降</span><strong id="bodyTotalChange">-</strong></article>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title-row">
+            <div>
+              <p class="eyebrow">Body Record</p>
+              <h3>新增身體紀錄</h3>
+            </div>
+            <div class="range-tabs body-mode-tabs">
+              <button class="range-tab active" type="button" id="bodyWeightModeBtn">只記錄體重</button>
+              <button class="range-tab" type="button" id="bodyInbodyModeBtn">新增 InBody</button>
+            </div>
+          </div>
+          <div class="form-grid">
+            <label>日期<input type="date" id="bodyDate" /></label>
+            <label>體重 kg<input type="number" step="0.1" id="bodyWeight" /></label>
+            <label class="inbody-field">骨骼肌重 kg<input type="number" step="0.1" id="skeletalMuscle" /></label>
+            <label class="inbody-field">體脂肪重 kg<input type="number" step="0.1" id="bodyFatMass" /></label>
+            <label class="inbody-field">BMI<input type="number" step="0.1" id="bodyBmi" /></label>
+            <label class="inbody-field">體脂肪率 %<input type="number" step="0.1" id="bodyFatPercent" /></label>
+            <label class="wide-field">備註<input id="bodyNote" placeholder="例如：InBody、晨起空腹、腸胃炎最輕" /></label>
+          </div>
+          <button id="addBodyBtn" class="primary-btn">新增身體紀錄</button>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title-row"><h3>體重趨勢</h3><p class="muted">依日期由舊到新顯示。</p></div>
+          <div id="bodyTrend" class="body-chart empty-state">尚無足夠資料。</div>
+        </div>
+
+        <div class="panel"><h3>身體紀錄</h3><div id="bodyList" class="record-list empty-state">尚無紀錄。</div></div>
+      </section>
+
+      <section id="cardio-view" class="page-view">
+        <div class="panel">
+          <div class="panel-title-row">
+            <div>
+              <p class="eyebrow">Cardio Log</p>
+              <h3>新增有氧</h3>
+            </div>
+            <p class="muted">支援飛輪螢幕常見數據：時間、熱量、心率、功率。</p>
+          </div>
+          <div class="form-grid">
+            <label>運動日期<input type="date" id="cardioDate" /></label>
+            <label>開始時間<input type="time" id="cardioStartTime" /></label>
+            <label>結束時間<input type="time" id="cardioEndTime" /></label>
+            <label>類型<select id="cardioType"><option>飛輪</option><option>走路</option><option>跑步</option><option>羽球</option><option>划船機</option><option>其他</option></select></label>
+            <label>運動時間<input id="cardioDuration" placeholder="例如 45:37 或 45" /></label>
+            <label>熱量 kcal<input type="number" id="cardioCalories" placeholder="例如 423" /></label>
+            <label>平均心率 bpm<input type="number" id="cardioHeartRate" placeholder="例如 117" /></label>
+            <label>平均功率 W<input type="number" id="cardioPower" placeholder="例如 183" /></label>
+            <label>距離 mi / 英里<input type="number" step="0.01" id="cardioDistance" /></label>
+            <label>速度 / 配速<input id="cardioSpeed" placeholder="可留空" /></label>
+            <label>阻力<input id="cardioResistance" placeholder="可留空" /></label>
+            <label>照片連結<input id="cardioImageUrl" placeholder="可留空，之後可接 Firebase Storage" /></label>
+            <label class="wide-field">備註<input id="cardioNote" /></label>
+          </div>
+          <button id="addCardioBtn" class="primary-btn">新增有氧</button>
+        </div>
+        <div class="panel"><h3>有氧紀錄</h3><div id="cardioList" class="record-list empty-state">尚無紀錄。</div></div>
+      </section>
+
+      <section id="stats-view" class="page-view">
+        <div class="grid cards-4">
+          <article class="stat-card"><span>總訓練天數</span><strong id="totalWorkoutDays">0</strong></article>
+          <article class="stat-card"><span>總組數</span><strong id="totalSets">0</strong></article>
+          <article class="stat-card"><span>總有氧</span><strong id="totalCardio">0 分</strong></article>
+          <article class="stat-card"><span>器材數</span><strong id="totalExercises">0</strong></article>
+        </div>
+        <div class="panel"><div class="panel-title-row"><h3>統計分析</h3><div class="range-tabs"><button class="range-tab" data-range="week">週區間</button><button class="range-tab" data-range="month">月份</button><button class="range-tab active" data-range="all">全部</button></div></div><div id="statsRangeControls" class="stats-range-controls hidden"><label id="weekRangeField">選擇週區間<select id="statsWeekSelect"></select></label><label id="monthRangeField">選擇月份<select id="statsMonthSelect"></select></label></div><div id="statsDetail" class="empty-state">登入後顯示統計。</div></div>
+      </section>
+
+
+      <section id="analysis-view" class="page-view">
+        <div class="panel">
+          <div class="panel-title-row">
+            <div>
+              <p class="eyebrow">Activity Heatmap</p>
+              <h3>訓練熱度圖</h3>
+            </div>
+            <p class="muted">顏色代表當天訓練類型。</p>
+          </div>
+          <div id="trainingHeatmap" class="heatmap-wrap empty-state">登入後顯示訓練熱度圖。</div>
+          <div id="heatmapSummary" class="heatmap-summary empty-state">點選日期查看當天摘要。</div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title-row">
+            <div>
+              <p class="eyebrow">Exercise History</p>
+              <h3>動作歷史</h3>
+            </div>
+            <div class="analysis-controls">
+              <label>選擇動作<select id="exerciseHistorySelect"></select></label>
+              <label>圖表指標<select id="exerciseMetricSelect"><option value="maxWeight">最大重量</option><option value="volume">訓練量 Volume</option><option value="reps">總次數</option><option value="time">總時間</option></select></label>
+            </div>
+          </div>
+          <div id="exerciseHistoryChart" class="exercise-chart empty-state">尚無動作資料。</div>
+          <div id="exerciseHistoryDetail" class="record-list empty-state">選擇動作後顯示歷史紀錄。</div>
+        </div>
+      </section>
+
+      <section id="import-view" class="page-view">
+        <div class="panel">
+          <div class="panel-title-row">
+            <div>
+              <p class="eyebrow">批次建立歷史資料</p>
+              <h3>資料匯入</h3>
+            </div>
+          </div>
+          <p class="muted import-help">先用固定格式貼上歷史紀錄，按「解析預覽」確認後，再匯入 Firebase。匯入時會用你填的訓練時間排序，並同步更新器材資料庫、使用次數、PR、上次訓練。</p>
+          <div class="format-card">
+            <strong>固定格式範例</strong>
+            <pre>2026-06-02
+重訓
+14:20, HAMMER 手臂, 65, lbs, 10, RPE8, 手臂
+14:24, HAMMER 手臂, 60, lbs, 8, RPE8, 手臂
+14:30, Ab Crunch, 30, kg, 15, RPE7, 核心
+
+有氧
+15:10, 15:56, 飛輪, 45:37, 423, 117, 183, , , , 狀態不錯
+
+2026-06-03
+有氧
+20:00, 22:00, 羽球, 120, , , , , , , 雙打</pre>
+          </div>
+          <label>貼上歷史紀錄
+            <textarea id="importText" rows="14" placeholder="把歷史紀錄貼在這裡"></textarea>
+          </label>
+          <div class="action-row">
+            <button id="previewImportBtn" class="ghost-light-btn">解析預覽</button>
+            <button id="runImportBtn" class="primary-btn">匯入 Firebase</button>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>匯入預覽</h3>
+          <div id="importPreview" class="record-list empty-state">尚未解析。</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
